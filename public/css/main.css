@@ -1,0 +1,35 @@
+body {
+  padding: 0;
+  margin: 0;
+  font-family: sans-serif;
+}
+.main-header {
+  height: 3.5rem;
+  background-color: peru;
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+}
+.main-header__list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+}
+.main-header__list-item {
+  margin: 0;
+  padding: 0 1rem;
+}
+.main-header__list-item a:hover,
+.main-header__list-item a:active,
+.main-header__list-item.active a {
+  color: #143680;
+}
+.main-header__list-item a {
+  text-decoration: none;
+  color: white;
+}
+
+main {
+  padding: 1rem;
+}
