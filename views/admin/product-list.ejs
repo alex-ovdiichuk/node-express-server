@@ -1,25 +1,31 @@
 <%- include('../includes/head.ejs') %> <%- include('../includes/navbar.ejs') %>
 <main>
   <h1>Admin Product List</h1>
-  <% if (products.length !== 0) { products.forEach(product => { %>
-  <div class="product">
-    <div class="product__header">
-      <h2 class="product__title"><%= product.title %></h2>
-      <p class="product__price">$<%= product.price %></p>
+  <div class="products">
+    <% if (products.length !== 0) { products.forEach(product => { %>
+    <div class="product">
+      <div class="product__header">
+        <h2 class="product__title"><%= product.title %></h2>
+        <p class="product__price">$<%= product.price %></p>
+      </div>
+      <div class="product__image-wrapper">
+        <img
+          class="product__image"
+          src="<%= product.imageUrl %>"
+          alt="<%= product.title %>"
+        />
+      </div>
+      <p class="product__description"><%= product.description %></p>
+      <a href="/admin/edit-product/<%= product.id %>" class="product__button">
+        Edit
+      </a>
+      <a href="/admin/delete-product/<%= product.id %>" class="product__button">
+        Delete
+      </a>
     </div>
-    <div class="product__image-wrapper">
-      <img
-        class="product__image"
-        src="<%= product.imageUrl %>"
-        alt="<%= product.title %>"
-      />
-    </div>
-    <p class="product__description"><%= product.description %></p>
-    <a href="#" class="product__button">Edit</a>
-    <a href="#" class="product__button">Delete</a>
+    <% }) } else { %>
+    <div>No products added yet</div>
+    <% } %>
   </div>
-  <% }) } else { %>
-  <div>No products added yet</div>
-  <% } %>
 </main>
 <%- include('../includes/end.ejs') %>

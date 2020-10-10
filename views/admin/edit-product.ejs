@@ -1,5 +1,50 @@
 <%- include('../includes/head.ejs') %> <%- include('../includes/navbar.ejs') %>
 <main>
-  <h1>Edit Product</h1>
+  <h1>Add Product</h1>
+  <form
+    class="product-form"
+    action="<%= path === 'admin/edit-product' ? '/admin/edit-product' : '/admin/add-product' %>"
+    method="POST"
+  >
+    <div class="form-control">
+      <div class="form-group">
+        <label for="title">Title</label>
+        <input
+          type="text"
+          id="title"
+          name="title"
+          value="<%= product ? product.title : '' %>"
+        />
+      </div>
+      <div class="form-group">
+        <label for="imageUrl">Image URL</label>
+        <input
+          type="text"
+          id="imageUrl"
+          name="imageUrl"
+          value="<%= product ? product.imageUrl : '' %>"
+        />
+      </div>
+      <div class="form-group">
+        <label for="price">Price</label>
+        <input
+          type="number"
+          id="price"
+          name="price"
+          step="0.01"
+          value="<%= product ? product.price : '' %>"
+        />
+      </div>
+      <div class="form-group">
+        <label for="description">Description</label>
+        <textarea name="description" id="description" cols="30" rows="10">
+<%= product ? product.description : '' %></textarea
+        >
+      </div>
+      <input type="hidden" name="id" value="<%= product ? product.id : '' %>" />
+    </div>
+
+    <button type="submit">Submit</button>
+  </form>
 </main>
 <%- include('../includes/end.ejs') %>

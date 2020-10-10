@@ -1,5 +1,22 @@
 <%- include('../includes/head.ejs') %> <%- include('../includes/navbar.ejs') %>
 <main>
   <h1>Cart</h1>
+  <div class="cart">
+    <% if (cartProducts.length > 0) { %>
+    <ul>
+      <% cartProducts.forEach(p => { %>
+      <li>
+        <div>
+          <h2><%= p.product.title %></h2>
+          <span>$<%= p.product.price %> (<%= p.quantity %>)</span>
+          <a href="/cart/remove/<%= p.product.id %>" class="product__button">
+            Remove From Cart
+          </a>
+        </div>
+      </li>
+      <% }) %>
+    </ul>
+    <% } else { %>No Items<% } %>
+  </div>
 </main>
 <%- include('../includes/end.ejs') %>
