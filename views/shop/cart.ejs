@@ -7,15 +7,16 @@
       <% cartProducts.forEach(p => { %>
       <li>
         <div>
-          <h2><%= p.product.title %></h2>
-          <span>$<%= p.product.price %> (<%= p.quantity %>)</span>
-          <a href="/cart/remove/<%= p.product.id %>" class="product__button">
+          <h2><%= p.title %></h2>
+          <span>$<%= p.price %> (<%= p.cartItem.quantity %>)</span>
+          <a href="/cart/remove/<%= p.id %>" class="product__button">
             Remove From Cart
           </a>
         </div>
       </li>
       <% }) %>
     </ul>
+    <a href="/create-order" class="product__button">Checkout</a>
     <% } else { %>No Items<% } %>
   </div>
 </main>

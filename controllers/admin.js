@@ -8,60 +8,81 @@ exports.getAddProduct = (req, res) => {
   });
 };
 
-exports.postAddProduct = (req, res) => {
-  const title = req.body.title;
-  const imageUrl = req.body.imageUrl;
-  const price = req.body.price;
-  const description = req.body.description;
-  const product = new Product(null, title, imageUrl, price, description);
-  product.save();
+exports.postAddProduct = async (req, res) => {
+  try {
+    const result = await req.user.createProduct({
+      title: req.body.title,
+      imageUrl: req.body.imageUrl,
+      price: req.body.price,
+      description: req.body.description,
+    });
+    if (!result) throw new Error("Product not added");
+    console.log("Product created");
+  } catch (err) {
+    console.log(err);
+  }
+
   res.redirect("/admin/products");
 };
 
-exports.getEditProduct = (req, res) => {
+exports.getEditProduct = async (req, res) => {
   const id = req.params.productId;
-  Product.findById(id, (product) => {
-    if (!product) res.render("404", { pageTitle: "Not Found", path: null });
-    else
-      res.render("admin/edit-product", {
-        pageTitle: "Edit Product",
-        path: "admin/edit-product",
-        product,
-      });
-  });
+  try {
+    const product = await req.user.getProducts({ where: { id } });
+    if (!product) throw new Error("No product");
+    res.render("admin/edit-product", {
+      pageTitle: "Edit Product",
+      path: "admin/edit-product",
+      product: product[0],
+    });
+  } catch (err) {
+    console.log(err);
+    res.render("404", { pageTitle: "Not Found", path: null });
+  }
 };
 
-exports.postEditProduct = (req, res) => {
+exports.postEditProduct = async (req, res) => {
   const newData = req.body;
-  Product.findById(newData.id, (product) => {
-    if (!product) res.render("404", { pageTitle: "Not Found", path: null });
-    else {
-      const newProduct = new Product(
-        newData.id,
-        newData.title,
-        newData.imageUrl,
-        newData.price,
-        newData.description
-      );
-      newProduct.save();
-      res.redirect("/product/" + newData.id);
-    }
-  });
+
+  try {
+    const product = await Product.findByPk(newData.id);
+    if (!product) throw new Error("No product");
+
+    product.title = newData.title;
+    product.imageUrl = newData.imageUrl;
+    product.price = newData.price;
+    product.description = newData.description;
+
+    const result = await product.save();
+    if (!result) throw new Error("Error on saving product");
+
+    res.redirect("/product/" + newData.id);
+  } catch (err) {
+    console.log(err);
+  }
 };
 
-exports.getDeleteProduct = (req, res) => {
+exports.getDeleteProduct = async (req, res) => {
   const id = req.params.productId;
-  Product.delete(id, () => {
+  try {
+    const result = await Product.destroy({ where: { id } });
+    if (!result) throw new Error("Product not deleted");
     res.redirect("/admin/products");
-  });
+  } catch (err) {
+    console.log(err);
+  }
 };
 
-exports.getProducts = (req, res) => {
-  Product.fetchAll((products) =>
+exports.getProducts = async (req, res) => {
+  try {
+    const products = await req.user.getProducts();
+    if (!products) throw new Error("Products was not finded");
     res.render("admin/product-list", {
       pageTitle: "Products",
       path: "admin/products",
       products,
-    })
-  );
+    });
+  } catch (err) {
+    console.log(err);
+  }
 };
