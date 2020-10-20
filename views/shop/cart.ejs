@@ -8,8 +8,8 @@
       <li>
         <div>
           <h2><%= p.title %></h2>
-          <span>$<%= p.price %> (<%= p.cartItem.quantity %>)</span>
-          <a href="/cart/remove/<%= p.id %>" class="product__button">
+          <span>$<%= p.price %> (<%= p.quantity %>)</span>
+          <a href="/cart/remove/<%= p._id %>" class="product__button">
             Remove From Cart
           </a>
         </div>

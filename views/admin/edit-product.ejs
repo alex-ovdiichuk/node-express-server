@@ -41,7 +41,11 @@
 <%= product ? product.description : '' %></textarea
         >
       </div>
-      <input type="hidden" name="id" value="<%= product ? product.id : '' %>" />
+      <input
+        type="hidden"
+        name="id"
+        value="<%= product ? product._id : '' %>"
+      />
     </div>
 
     <button type="submit">Submit</button>

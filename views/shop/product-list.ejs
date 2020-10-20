@@ -16,8 +16,8 @@
         />
       </div>
       <p class="product__description"><%= product.description %></p>
-      <a href="/product/<%= product.id %>" class="product__button">Details</a>
-      <a href="/cart/<%= product.id %>" class="product__button">Add To Cart</a>
+      <a href="/product/<%= product._id %>" class="product__button">Details</a>
+      <a href="/cart/<%= product._id %>" class="product__button">Add To Cart</a>
     </div>
     <% }) } else { %>
     <div>No products added yet</div>

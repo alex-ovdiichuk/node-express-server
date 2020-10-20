@@ -16,10 +16,13 @@
         />
       </div>
       <p class="product__description"><%= product.description %></p>
-      <a href="/admin/edit-product/<%= product.id %>" class="product__button">
+      <a href="/admin/edit-product/<%= product._id %>" class="product__button">
         Edit
       </a>
-      <a href="/admin/delete-product/<%= product.id %>" class="product__button">
+      <a
+        href="/admin/delete-product/<%= product._id %>"
+        class="product__button"
+      >
         Delete
       </a>
     </div>
