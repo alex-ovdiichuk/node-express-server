@@ -1,20 +1,13 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const path = require("path");
+const mongoose = require("mongoose");
 
 const adminRoutes = require("./routes/admin");
 const shopRoutes = require("./routes/shop");
 const errorController = require("./controllers/error");
-//const sequelize = require("./util/db");
-const mongo = require("./util/mongo");
-const User = require("./models/user");
 
-// const Product = require("./models/product");
-// const User = require("./models/user");
-// const Cart = require("./models/cart");
-// const CartItem = require("./models/cart-item");
-// const Order = require("./models/order");
-// const OrderItem = require("./models/order-item");
+const User = require("./models/user");
 
 const app = express();
 
@@ -26,9 +19,9 @@ app.use(express.static(path.join(__dirname, "public")));
 
 app.use(async (req, res, next) => {
   try {
-    const user = await User.fetchById("5f8deed37f56ec37091a1d76");
+    const user = await User.findById("5fa24ed35bc24a24642539c7");
     if (!user) throw new Error("User not found");
-    req.user = new User(user.login, user.email, user.cart, user._id);
+    req.user = user;
     next();
   } catch (err) {
     console.log(err);
@@ -40,33 +33,18 @@ app.use(shopRoutes);
 
 app.use(errorController.get404);
 
-// Product.belongsTo(User, { constraints: true, onDelete: "CASCADE" });
-// User.hasMany(Product);
-// User.hasOne(Cart);
-// Cart.belongsTo(User);
-// Cart.belongsToMany(Product, { through: CartItem });
-// Product.belongsToMany(Cart, { through: CartItem });
-// Order.belongsTo(Order);
-// User.hasMany(Order);
-// Order.belongsToMany(Product, { through: OrderItem });
-
-// sequelize
-//   .sync()
-//   .then((result) => {
-//     return User.findByPk(1);
-//     //console.log(result);
-//   })
-//   .then(async (user) => {
-//     if (!user) {
-//       const user = await User.create({
-//         name: "Vasya",
-//         email: "test@test.test",
-//       });
-//       user.createCart();
-//     }
-//     return Promise.resolve(user);
-//   })
-//   .catch((err) => console.log(err));
-mongo.mongoConnect(() => {
-  app.listen(3000, () => console.log("Server is running"));
-});
+mongoose
+  .connect("mongodb://localhost:27017/shop", {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then((result) => {
+    // const user = new User({
+    //   login: "Vasya",
+    //   email: "vasya@gmail.com",
+    //   cart: { items: [] },
+    // });
+    // user.save();
+    app.listen(3000, () => console.log("Server is running"));
+  })
+  .catch((err) => console.log(err));

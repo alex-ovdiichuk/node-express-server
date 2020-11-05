@@ -10,14 +10,13 @@ exports.getAddProduct = (req, res) => {
 
 exports.postAddProduct = async (req, res) => {
   try {
-    const product = new Product(
-      req.body.title,
-      req.body.imageUrl,
-      req.body.price,
-      req.body.description,
-      null,
-      req.user._id
-    );
+    const product = new Product({
+      title: req.body.title,
+      imageUrl: req.body.imageUrl,
+      price: req.body.price,
+      description: req.body.description,
+      userId: req.user._id,
+    });
     const result = await product.save();
     if (!result) throw new Error(result);
     res.redirect("/admin/products");
@@ -29,7 +28,7 @@ exports.postAddProduct = async (req, res) => {
 exports.getEditProduct = async (req, res) => {
   const id = req.params.productId;
   try {
-    const product = await Product.fetchById(id);
+    const product = await Product.findById(id);
     if (!product) throw new Error("No product");
     res.render("admin/edit-product", {
       pageTitle: "Edit Product",
@@ -46,16 +45,15 @@ exports.postEditProduct = async (req, res) => {
   const newData = req.body;
 
   try {
-    const product = new Product(
-      newData.title,
-      newData.imageUrl,
-      newData.price,
-      newData.description,
-      newData.id
-    );
+    const product = await Product.findById(newData.id);
+    if (!product) throw new Error(product);
+    product.title = newData.title;
+    product.imageUrl = newData.imageUrl;
+    product.price = newData.price;
+    product.description = newData.description;
 
     const result = await product.save();
-    if (!result) throw new Error("Error on saving product");
+    if (!result) throw new Error(result);
 
     res.redirect("/product/" + newData.id);
   } catch (err) {
@@ -66,7 +64,7 @@ exports.postEditProduct = async (req, res) => {
 exports.getDeleteProduct = async (req, res) => {
   const id = req.params.productId;
   try {
-    const result = await Product.deleteById(id);
+    const result = await Product.findByIdAndRemove(id);
     if (!result) throw new Error("Product not deleted");
     res.redirect("/admin/products");
   } catch (err) {
@@ -76,7 +74,7 @@ exports.getDeleteProduct = async (req, res) => {
 
 exports.getProducts = async (req, res) => {
   try {
-    const products = await Product.fetchAll();
+    const products = await Product.find();
     if (!products) throw new Error("Products was not finded");
     res.render("admin/product-list", {
       pageTitle: "Products",

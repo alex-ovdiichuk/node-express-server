@@ -1,8 +1,9 @@
 const Product = require("../models/product");
+const Order = require("../models/order");
 
 exports.getProducts = async (req, res) => {
   try {
-    const products = await Product.fetchAll();
+    const products = await Product.find();
     if (!products) throw new Error("Products was not finded");
     res.render("shop/product-list", {
       pageTitle: "Products",
@@ -17,7 +18,7 @@ exports.getProducts = async (req, res) => {
 exports.getProduct = async (req, res) => {
   const id = req.params.id;
   try {
-    const product = await Product.fetchById(id);
+    const product = await Product.findById(id);
     res.render("shop/product-detail", {
       pageTitle: product.title,
       path: "products",
@@ -30,7 +31,7 @@ exports.getProduct = async (req, res) => {
 
 exports.getShopIndex = async (req, res) => {
   try {
-    const products = await Product.fetchAll();
+    const products = await Product.find();
     if (!products) throw new Error("Products was not finded");
     res.render("shop/index", { pageTitle: "Shop", path: "shop", products });
   } catch (err) {
@@ -40,13 +41,15 @@ exports.getShopIndex = async (req, res) => {
 
 exports.getCart = async (req, res) => {
   try {
-    const products = await req.user.getCart();
+    const products = await req.user
+      .populate("cart.items.productId")
+      .execPopulate();
     if (!products) throw new Error("Products in cart not loaded");
 
     res.render("shop/cart", {
       pageTitle: "Cart",
       path: "cart",
-      cartProducts: products,
+      cartProducts: products.cart.items,
     });
   } catch (err) {
     console.log(err);
@@ -56,7 +59,7 @@ exports.getCart = async (req, res) => {
 exports.getCartRemove = async (req, res) => {
   const id = req.params.id;
   try {
-    const result = await req.user.deleteItemFromCart(id);
+    const result = await req.user.deleteFromCart(id);
     if (!result) throw new Error("Product not deleted from cart");
     res.redirect("/cart");
   } catch (err) {
@@ -67,7 +70,7 @@ exports.getCartRemove = async (req, res) => {
 exports.getAddToCart = async (req, res) => {
   const id = req.params.id;
   try {
-    const product = await Product.fetchById(id);
+    const product = await Product.findById(id);
     if (!product) throw new Error(product);
     const result = await req.user.addToCart(product);
     if (!result) throw new Error(result);
@@ -75,41 +78,13 @@ exports.getAddToCart = async (req, res) => {
   } catch (err) {
     console.log(err);
   }
-
-  // try {
-  //   const cart = await req.user.getCart();
-  //   if (!cart) throw new Error("Cart not loaded");
-
-  //   const productsInCart = await cart.getProducts({ where: { id } });
-
-  //   let product;
-  //   if (productsInCart.length > 0) {
-  //     product = productsInCart[0];
-  //   }
-  //   let newQuantity = 1;
-  //   if (product) {
-  //     const oldQuantity = product.cartItem.quantity;
-  //     newQuantity = oldQuantity + 1;
-  //   }
-
-  //   const productInfo = await Product.findByPk(id);
-  //   if (!productInfo) throw new Error("Product not found");
-
-  //   const result = cart.addProduct(productInfo, {
-  //     through: { quantity: newQuantity },
-  //   });
-  //   if (!result) throw new Error("Not added to cart");
-
-  //   res.redirect("/cart");
-  // } catch (err) {
-  //   console.log(err);
-  // }
 };
 
 exports.getOrders = async (req, res) => {
   try {
-    const orders = await req.user.getOrders();
+    const orders = await Order.find({ "user.userId": req.user._id });
     if (!orders) throw new Error("Orders not loaded");
+    console.log(orders);
     res.render("shop/orders", { pageTitle: "Orders", path: "orders", orders });
   } catch (err) {
     console.log(err);
@@ -118,8 +93,28 @@ exports.getOrders = async (req, res) => {
 
 exports.getCreateOrder = async (req, res) => {
   try {
-    const result = await req.user.addOrder();
+    const products = await req.user
+      .populate("cart.items.productId")
+      .execPopulate();
+    if (!products) throw new Error(products);
+
+    const orderProducts = products.cart.items.map((product) => ({
+      quantity: product.quantity,
+      product: { ...product.productId._doc },
+    }));
+
+    const order = new Order({
+      products: orderProducts,
+      user: { login: req.user.login, userId: req.user._id },
+    });
+
+    req.user.cart.items = [];
+    const updateCart = await req.user.save();
+    if (!updateCart) throw new Error(updateCart);
+
+    const result = await order.save();
     if (!result) throw new Error(result);
+
     res.redirect("/orders");
   } catch (err) {
     console.log(err);

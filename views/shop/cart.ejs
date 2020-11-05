@@ -7,7 +7,7 @@
       <% cartProducts.forEach(p => { %>
       <li>
         <div>
-          <h2><%= p.title %></h2>
+          <h2><%= p.productId.title %></h2>
           <span>$<%= p.price %> (<%= p.quantity %>)</span>
           <a href="/cart/remove/<%= p._id %>" class="product__button">
             Remove From Cart
