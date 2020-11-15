@@ -5,6 +5,7 @@ exports.getAddProduct = (req, res) => {
     pageTitle: "Add Product",
     path: "admin/add-product",
     product: null,
+    isAuth: req.session.user,
   });
 };
 
@@ -15,7 +16,7 @@ exports.postAddProduct = async (req, res) => {
       imageUrl: req.body.imageUrl,
       price: req.body.price,
       description: req.body.description,
-      userId: req.user._id,
+      userId: req.session.user._id,
     });
     const result = await product.save();
     if (!result) throw new Error(result);
@@ -34,10 +35,15 @@ exports.getEditProduct = async (req, res) => {
       pageTitle: "Edit Product",
       path: "admin/edit-product",
       product: product,
+      isAuth: req.session.user,
     });
   } catch (err) {
     console.log(err);
-    res.render("404", { pageTitle: "Not Found", path: null });
+    res.render("404", {
+      pageTitle: "Not Found",
+      path: null,
+      isAuth: req.session.user,
+    });
   }
 };
 
@@ -80,6 +86,7 @@ exports.getProducts = async (req, res) => {
       pageTitle: "Products",
       path: "admin/products",
       products,
+      isAuth: req.session.user,
     });
   } catch (err) {
     console.log(err);

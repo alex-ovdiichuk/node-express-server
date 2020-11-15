@@ -9,6 +9,7 @@ exports.getProducts = async (req, res) => {
       pageTitle: "Products",
       path: "products",
       products,
+      isAuth: req.session.user,
     });
   } catch (err) {
     console.log(err);
@@ -23,6 +24,7 @@ exports.getProduct = async (req, res) => {
       pageTitle: product.title,
       path: "products",
       product,
+      isAuth: req.session.user,
     });
   } catch (err) {
     console.log(err);
@@ -33,7 +35,12 @@ exports.getShopIndex = async (req, res) => {
   try {
     const products = await Product.find();
     if (!products) throw new Error("Products was not finded");
-    res.render("shop/index", { pageTitle: "Shop", path: "shop", products });
+    res.render("shop/index", {
+      pageTitle: "Shop",
+      path: "shop",
+      products,
+      isAuth: req.session.user,
+    });
   } catch (err) {
     console.log(err);
   }
@@ -50,6 +57,7 @@ exports.getCart = async (req, res) => {
       pageTitle: "Cart",
       path: "cart",
       cartProducts: products.cart.items,
+      isAuth: req.session.user,
     });
   } catch (err) {
     console.log(err);
@@ -82,10 +90,14 @@ exports.getAddToCart = async (req, res) => {
 
 exports.getOrders = async (req, res) => {
   try {
-    const orders = await Order.find({ "user.userId": req.user._id });
+    const orders = await Order.find({ "user.userId": req.session.user._id });
     if (!orders) throw new Error("Orders not loaded");
-    console.log(orders);
-    res.render("shop/orders", { pageTitle: "Orders", path: "orders", orders });
+    res.render("shop/orders", {
+      pageTitle: "Orders",
+      path: "orders",
+      orders,
+      isAuth: req.session.user,
+    });
   } catch (err) {
     console.log(err);
   }
@@ -105,7 +117,7 @@ exports.getCreateOrder = async (req, res) => {
 
     const order = new Order({
       products: orderProducts,
-      user: { login: req.user.login, userId: req.user._id },
+      user: { login: req.session.user.login, userId: req.session.user._id },
     });
 
     req.user.cart.items = [];

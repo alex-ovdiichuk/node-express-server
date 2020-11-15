@@ -5,6 +5,8 @@
   <div><img src="<%= product.imageUrl %>" alt="<%= product.title %>" /></div>
   <h2>$<%= product.price %></h2>
   <p><%= product.description %></p>
+  <% if (isAuth) { %>
   <a href="/cart/<%= product.id %>" class="product__button">Add To Cart</a>
+  <% } %>
 </main>
 <%- include('../includes/end.ejs') %>

@@ -9,6 +9,7 @@
       >
         <a href="/products">Products</a>
       </li>
+      <% if (isAuth) { %>
       <li class="main-header__list-item<%= path === 'cart' ? ' active' : ''%>">
         <a href="/cart">Cart</a>
       </li>
@@ -27,6 +28,18 @@
       >
         <a href="/admin/products">Admin Products</a>
       </li>
+      <% } %>
+    </ul>
+    <ul class="main-header__user-nav">
+      <% if (!isAuth) { %>
+      <li class="main-header__user-nav-item">
+        <a href="/login">Login</a>
+      </li>
+      <% } else { %>
+      <li class="main-header__user-nav-item">
+        <a href="/logout">Logout</a>
+      </li>
+      <% } %>
     </ul>
   </nav>
 </header>
