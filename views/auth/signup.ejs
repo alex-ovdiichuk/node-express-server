@@ -1,21 +1,27 @@
 <%- include('../includes/head.ejs') %> <%- include('../includes/navbar.ejs') %>
 <main>
-  
   <form
-    class="login-form"
-    action="/login"
+    class="signup-form"
+    action="/signup"
     method="POST"
   >
-  <% if (error.length > 0) { %><div class="error"><%= error[0] %></div><% } %>
+    <% if (error.length > 0) { %><div class="error"><%= error[0] %></div><% } %>
     <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
     <div class="form-control">
-      
       <div class="form-group">
         <label for="login">Login</label>
         <input
           type="text"
           id="login"
           name="login"
+        />
+      </div>
+      <div class="form-group">
+        <label for="email">E-mail</label>
+        <input
+          type="email"
+          id="email"
+          name="email"
         />
       </div>
       <div class="form-group">
@@ -26,8 +32,16 @@
           name="password"
         />
       </div>
+      <div class="form-group">
+        <label for="confirm-password">Confirm password</label>
+        <input
+          type="password"
+          id="confirm-password"
+          name="confirmPassword"
+        />
+      </div>
 
-    <button type="submit">Log in</button>
+    <button type="submit">Signup</button>
   </form>
 </main>
 <%- include('../includes/end.ejs') %>

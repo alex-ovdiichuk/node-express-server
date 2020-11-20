@@ -6,6 +6,7 @@
     action="<%= path === 'admin/edit-product' ? '/admin/edit-product' : '/admin/add-product' %>"
     method="POST"
   >
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
     <div class="form-control">
       <div class="form-group">
         <label for="title">Title</label>

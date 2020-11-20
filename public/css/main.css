@@ -46,7 +46,8 @@ main {
 }
 
 .product-form,
-.login-form {
+.login-form,
+.signup-form {
   width: 500px;
   margin: 0 auto;
 }
@@ -133,4 +134,8 @@ main {
 .products {
   display: flex;
   justify-content: space-between;
+}
+
+.error {
+  color: red;
 }
