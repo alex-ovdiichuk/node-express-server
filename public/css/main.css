@@ -47,7 +47,8 @@ main {
 
 .product-form,
 .login-form,
-.signup-form {
+.signup-form,
+.reset-form {
   width: 500px;
   margin: 0 auto;
 }
