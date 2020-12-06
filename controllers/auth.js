@@ -2,6 +2,7 @@ const bcrypt = require("bcryptjs");
 const nodemailer = require("nodemailer");
 const sendgridTransport = require("nodemailer-sendgrid-transport");
 const crypto = require("crypto");
+const { validationResult } = require("express-validator");
 
 const User = require("../models/user");
 
@@ -20,6 +21,7 @@ exports.getLogin = async (req, res) => {
       pageTitle: "Login",
       path: "login",
       error: req.flash("error"),
+      oldInput: { login: "", password: "" },
     });
   } catch (err) {
     console.log(err);
@@ -31,19 +33,22 @@ exports.postLogin = async (req, res) => {
     const login = req.body.login;
     const password = req.body.password;
     const user = await User.findOne({ login: login });
-    if (!user) {
-      req.flash("error", "Invalid login or password");
-      return res.redirect("/login");
+
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(422).render("auth/login", {
+        pageTitle: "Login",
+        path: "login",
+        error: errors.array(),
+        oldInput: {
+          login,
+          password,
+        },
+      });
     }
 
-    const validatePassword = await bcrypt.compare(password, user.password);
-    if (validatePassword) {
-      req.session.user = user;
-      res.redirect("/");
-    } else {
-      req.flash("error", "Invalid login or password");
-      res.redirect("/login");
-    }
+    req.session.user = user;
+    res.redirect("/");
   } catch (err) {
     console.log(err);
   }
@@ -55,6 +60,7 @@ exports.getSignup = async (req, res) => {
       pageTitle: "Signup",
       path: "signup",
       error: req.flash("error"),
+      oldInput: { login: "", email: "", password: "" },
     });
   } catch (err) {
     console.log(err);
@@ -66,13 +72,20 @@ exports.postSignup = async (req, res) => {
     const login = req.body.login;
     const email = req.body.email;
     const password = req.body.password;
-    const confirmPassword = req.body.confirmPassword;
-    const checkEmail = await User.findOne({ email: email });
-    const checkLogin = await User.findOne({ login: login });
-    if (checkEmail || checkLogin) {
-      req.flash("error", "Email or password already exists");
-      return res.redirect("/signup");
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(422).render("auth/signup", {
+        pageTitle: "Signup",
+        path: "signup",
+        error: errors.array(),
+        oldInput: {
+          login,
+          email,
+          password,
+        },
+      });
     }
+
     const hash = await bcrypt.hash(password, 12);
     const user = new User({
       login,

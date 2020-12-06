@@ -6,7 +6,7 @@
     action="/login"
     method="POST"
   >
-  <% if (error.length > 0) { %><div class="error"><%= error[0] %></div><% } %>
+  <% if (error.length > 0) { %><div class="error"><%= error[0].msg || error[0] %></div><% } %>
     <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
     <div class="form-control">
       
@@ -16,6 +16,7 @@
           type="text"
           id="login"
           name="login"
+          value="<%= oldInput.login %>"
         />
       </div>
       <div class="form-group">
@@ -24,6 +25,7 @@
           type="password"
           id="password"
           name="password"
+          value="<%= oldInput.password %>"
         />
       </div>
       <div class="form-group">

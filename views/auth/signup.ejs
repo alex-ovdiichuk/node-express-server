@@ -4,8 +4,9 @@
     class="signup-form"
     action="/signup"
     method="POST"
+    novalidate
   >
-    <% if (error.length > 0) { %><div class="error"><%= error[0] %></div><% } %>
+    <% if (error.length > 0) { %><div class="error"><%= error[0].msg || error[0] %></div><% } %>
     <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
     <div class="form-control">
       <div class="form-group">
@@ -14,6 +15,7 @@
           type="text"
           id="login"
           name="login"
+          value="<%= oldInput.login %>"
         />
       </div>
       <div class="form-group">
@@ -22,6 +24,7 @@
           type="email"
           id="email"
           name="email"
+          value="<%= oldInput.email %>"
         />
       </div>
       <div class="form-group">
@@ -30,6 +33,7 @@
           type="password"
           id="password"
           name="password"
+          value="<%= oldInput.password %>"
         />
       </div>
       <div class="form-group">
